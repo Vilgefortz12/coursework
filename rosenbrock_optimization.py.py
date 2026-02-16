@@ -15,6 +15,10 @@ def callback(x):
 result = minimize( rosenbrock, x0 = [-1, 1], method = 'BFGS', tol = 1e-6, callback =callback ,  options = {'disp': True})
 
 
+print("Optimization trajectory:")
+for i, point in enumerate(trajectory):
+    print(f"Iteraton {i+1} : x = {point[0]:.6f}, y = {point[1]:.6f}, f = {rosenbrock(point):.6f}")
+
 
 print("The point found", result.x)
 print("Value", result.fun)
@@ -40,6 +44,10 @@ plt.legend()
 
 plt.plot(trajectory[:,0],trajectory[:,1],'r.-')
 plt.show()
+
+
+
+
 
 
 
