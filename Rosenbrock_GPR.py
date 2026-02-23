@@ -179,3 +179,44 @@ for i, (kernel, name) in enumerate(zip(kernels, kernel_names)):
 plt.suptitle('Comparison of different kernels for Gaussian Process Regression', fontsize=16, y=0.98)
 plt.tight_layout()
 plt.show()
+
+
+n_points = [5,10,30,50,100,500]
+
+plt.figure(figsize=(15, 10))
+
+for i, n in enumerate(n_points):
+    plt.subplot(3, 3, i+1)
+    
+    X_train = np.random.uniform(-2, 2, (n, 2))
+    Y_train = np.array([rosenbrock(x) for x in X_train])
+    
+    kernel = RBF(length_scale=1.0)
+    
+    gpr = GaussianProcessRegressor(
+        kernel=kernel,
+        n_restarts_optimizer=10,
+        random_state=30
+    )
+    
+    gpr.fit(X_train, Y_train)
+    
+    optimized_scale = gpr.kernel_.length_scale
+    
+    X_test = np.linspace(-2, 2, 200).reshape(-1, 1)
+    X_test = np.hstack([X_test, np.zeros_like(X_test)])
+    y_mean = gpr.predict(X_test)
+    y_true = np.array([rosenbrock([x, 0]) for x in X_test[:, 0]])
+    
+    plt.plot(X_test[:, 0], y_mean, 'r', label='Prediction')
+    plt.scatter(X_train[:, 0], Y_train, c='blue', s=15, alpha=0.5)
+    plt.plot(X_test[:, 0], y_true, 'k--', alpha=0.7)
+    
+    plt.title(f'GPR on Rosenbrock functions, n={n}, scale={optimized_scale:.2f}')
+    plt.xlabel('X')
+    plt.ylabel('Y')
+    plt.grid(True, alpha=0.3)
+
+plt.suptitle('Dependence on number of training points', fontsize=16, y=0.98)
+plt.tight_layout()
+plt.show()
